@@ -1,0 +1,15 @@
+#connectSpotify{
+  -fx-border-radius: 10;
+  -fx-border-color: #00CF5B;
+  -fx-padding: 35;
+}
+
+#connectSpotify:hover {
+  -fx-background-color: #00cf5b;
+  -fx-background-radius:13;
+  -fx-background-position:center;
+}
+
+#connectSpotify:pressed {
+  -fx-background-color: #19AB4F;
+}

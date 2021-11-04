@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" fx:id="rootPane" fx:controller="com.absan.kopi.LandingViewController" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="963.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ImageView fitHeight="722.0" fitWidth="1067.0" layoutX="-2.0" layoutY="-65.0" opacity="0.24" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@Images/abstract.png" />
+            </image>
+        </ImageView>
+        <Pane  layoutX="87.0" layoutY="84.0" prefHeight="426.0" prefWidth="426.0">
+            <children>
+                <Label layoutX="31.0" layoutY="177.0" prefHeight="66.0" prefWidth="301.0" text="Get more from free spotify">
+                    <font>
+                        <Font name="Calibri Light" size="27.0" />
+                    </font>
+                </Label>
+                <Label layoutX="34.0" layoutY="39.0" prefHeight="138.0" prefWidth="310.0" text="Kopi" textFill="#454a4f">
+                    <font>
+                        <Font name="Franklin Gothic Medium" size="82.0" />
+                    </font>
+                </Label>
+                <Pane layoutX="34.0" layoutY="282.0" prefHeight="79.0" fx:id="connectSpotify"  stylesheets="@Stylesheets/spotifyconnect.css"  onMouseEntered="#loginHoverEnterEffect" onMouseClicked="#loginClickEffect" onMouseExited="#loginHoverExitEffect" prefWidth="294.0">
+                    <children>
+                        <ImageView fitHeight="55.0" fitWidth="55.0" layoutX="225.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" fx:id="spotifyInactive">
+                            <image>
+                                <Image url="@Images/spotify.png" />
+                            </image>
+                        </ImageView>
+                        <Label prefHeight="79.0" prefWidth="217.0" style="-fx-alignment: CENTER;" fx:id="loginButtonText" text="Connect Spotify" textFill="#1ed760">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="55.0" fitWidth="55.0" layoutX="225.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" fx:id="spotifyActive" style="opacity: 0.0;">
+                            <image>
+                                <Image url="@Images/spotifyActive.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Pane>
+            </children>
+        </Pane>
+    </children>
+</AnchorPane>
