@@ -1,6 +1,7 @@
 package com.absan.kopi.utils;
 
 import com.absan.kopi.Google.GoogleLyrics;
+import com.absan.kopi.Musixmatch.MusixmatchLyrics;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,9 +19,9 @@ public class CurrentSong {
     public static StringProperty songname = new SimpleStringProperty();
     public static StringProperty lyricContent = new SimpleStringProperty();
     public static GoogleLyrics gLyrics = null;
+    public static MusixmatchLyrics mLyrics = null;
 
     public static String currentSong = "";
-    boolean init = false;
 
 
     public CurrentSong() {
@@ -33,8 +34,9 @@ public class CurrentSong {
                 if (!oldSong[0].equals(SpotifyState.getCurrentSongName())) {
                     oldSong[0] = SpotifyState.getCurrentSongName();
                     currentSong = SpotifyState.getCurrentSongName();
-                    if (gLyrics == null && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free")) {
-                        gLyrics = new GoogleLyrics();
+                    if (mLyrics == null && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free")) {
+//                        gLyrics = new GoogleLyrics();
+                        mLyrics = new MusixmatchLyrics();
                     }
                     try {
                         callback();
@@ -52,24 +54,29 @@ public class CurrentSong {
 
         System.out.println(currentSong);
 
-        if (!currentSong.equals("Advertisement") && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free")) {
+        if (!currentSong.equals("Advertisement") && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free") && !currentSong.equals("Spotify")) {
             Platform.runLater(() -> {
                 songname.set(CurrentSong.currentSong);
                 SongName.textProperty().bind(songname);
             });
+            SpotifyState.getSongId();
             Platform.runLater(() -> {
                 try {
-                    gLyrics.refreshLyrics();
-                    lyricContent.set(gLyrics.finalLyrics);
+                    mLyrics.refreshLyrics();
+                    lyricContent.set(MusixmatchLyrics.mfinalLyrics);
+//                    gLyrics.refreshLyrics();
+//                    lyricContent.set(gLyrics.finalLyrics);
                 } catch (IOException e) {
                     e.printStackTrace();
                     lyricContent.set(String.valueOf(e));
                 }
+
                 LyricsLabel.textProperty().bind(lyricContent);
+
             });
-            SpotifyState.getSongId();
+            new DominantColor(SpotifyState.imageLink);
+
         }
-//        }
     }
 
 

@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.Random;
 
 public class MusixmatchLyrics {
-    String artistName = CurrentSong.currentSong.split(" - ")[0];
-    String songName = CurrentSong.currentSong.split(" - ")[1];
+    String artistName;
+    String songName;
     public static List<String> musixmatchUnsyncedLyrics = new ArrayList<String>();
     public static List<RichLyrics> musixmatchSyncedLyrics = new ArrayList<RichLyrics>();
+    public static String mfinalLyrics = "";
 
     List<String> userTokenList = new ArrayList(Arrays.asList(
             "2110231e1499a3fcd07aa419d7eee9f4e7d46e17650d65198585d5",
@@ -46,28 +47,38 @@ public class MusixmatchLyrics {
 
     String userToken = userTokenList.get(new Random().nextInt(userTokenList.size()));
 
-    StringBuilder musixmatchQuery = new StringBuilder()
-            .append("https://apic-desktop.musixmatch.com/ws/1.1/macro.subtitles.get?")
-            .append("format=json&")
-            .append("namespace=lyrics_synched&")
-            .append("part=lyrics_crowd%2Cuser%2Clyrics_verified_by&")
-            .append("q_artist=").append(URLEncoder.encode(artistName, StandardCharsets.UTF_8))
-            .append("&q_track=").append(URLEncoder.encode(songName, StandardCharsets.UTF_8))
-            .append("&user_language=en&")
-            .append("tags=nowplaying&")
-            .append("f_subtitle_length_max_deviation=1&")
-            .append("subtitle_format=mxm&")
-            .append("app_id=web-desktop-app-v1.0&")
-            .append("usertoken=").append(userToken)
-            .append("&guid=3733bd57-494d-4534-987f-c6a369302507&")
-            .append("signature=0IwdyrdfMG0e%2B8B%2FhnuTnnKAhvI%3D&")
-            .append("signature_protocol=sha1");
 
+    public void refreshLyrics() throws IOException {
+        artistName = CurrentSong.currentSong.split(" - ")[0];
+        songName = CurrentSong.currentSong.split(" - ")[1];
+        StringBuilder musixmatchQuery = new StringBuilder()
+                .append("https://apic-desktop.musixmatch.com/ws/1.1/macro.subtitles.get?")
+                .append("format=json&")
+                .append("namespace=lyrics_synched&")
+                .append("part=lyrics_crowd%2Cuser%2Clyrics_verified_by&")
+                .append("q_artist=").append(URLEncoder.encode(artistName, StandardCharsets.UTF_8))
+                .append("&q_track=").append(URLEncoder.encode(songName, StandardCharsets.UTF_8))
+                .append("&user_language=en&")
+                .append("tags=nowplaying&")
+                .append("f_subtitle_length_max_deviation=1&")
+                .append("subtitle_format=mxm&")
+                .append("app_id=web-desktop-app-v1.0&")
+                .append("usertoken=").append(userToken)
+                .append("&guid=3733bd57-494d-4534-987f-c6a369302507&")
+                .append("signature=0IwdyrdfMG0e%2B8B%2FhnuTnnKAhvI%3D&")
+                .append("signature_protocol=sha1");
 
-    public MusixmatchLyrics() throws IOException {
         ParseApiResponse variable = new ParseApiResponse(String.valueOf(musixmatchQuery));
         musixmatchUnsyncedLyrics = variable.unsyncedLyrics;
         musixmatchSyncedLyrics = variable.syncedLyrics;
+
+        StringBuilder sb = new StringBuilder();
+        musixmatchUnsyncedLyrics.forEach(line -> {
+            sb.append(line).append("\n");
+        });
+
+        mfinalLyrics = String.valueOf(sb);
+
     }
 
 

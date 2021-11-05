@@ -5,6 +5,7 @@ module com.absan.kopi {
     requires java.desktop;
     requires org.jsoup;
     requires com.google.gson;
+    requires ffmpeg;
 
 
     opens com.absan.kopi to javafx.fxml;

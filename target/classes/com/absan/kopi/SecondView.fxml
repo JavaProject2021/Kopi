@@ -16,9 +16,9 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="959.0"
                             style="-fx-background-color: #e4e4e4;">
                     <children>
-                        <Label fx:id="LyricsLabel" alignment="TOP_LEFT" layoutX="14.0" prefWidth="937.0"
+                        <Label fx:id="LyricsLabel" alignment="TOP_LEFT" prefWidth="935.0"
                                text="Hello this is a text" textOverrun="CLIP" wrapText="true"
-                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-14.0"
+                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                AnchorPane.topAnchor="0.0">
                             <font>
                                 <Font size="19.0"/>

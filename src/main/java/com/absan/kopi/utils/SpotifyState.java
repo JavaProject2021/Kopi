@@ -1,7 +1,8 @@
 package com.absan.kopi.utils;
 
 import com.absan.kopi.Spotify.Endpoints;
-import com.absan.kopi.Spotify.SpotifyToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,12 +11,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 import static com.absan.kopi.Main.tokenGetter;
 
 public class SpotifyState {
+    public static String imageLink;
+    public static String songId;
 
     public static void kill() throws IOException {
         Runtime.getRuntime().exec("taskkill /F /IM Spotify.exe");
@@ -25,6 +28,7 @@ public class SpotifyState {
         Runtime.getRuntime().exec(System.getenv("APPDATA") + "\\Spotify\\Spotify.exe");
     }
 
+//    TODO: Make a method to close and open spotify and resume playing song with windows sound server
     public static void skipAd() {
         try {
             SpotifyState.kill();
@@ -92,20 +96,70 @@ public class SpotifyState {
     public static void getSongId() throws IOException {
 
         if (!CurrentSong.currentSong.equals("Advertisement") && !CurrentSong.currentSong.equals("Spotify not opened") && !CurrentSong.currentSong.equals("Spotify Free")) {
-            String query = "q=" + URLEncoder.encode("track:\"" + CurrentSong.currentSong.split(" - ")[1] + "\"", StandardCharsets.UTF_8).replace("+", "%20") +
-                    URLEncoder.encode("+artist:\"" + CurrentSong.currentSong.split(" - ")[0] + "\"", StandardCharsets.UTF_8).replace("+", "%20") +
-                    "&type=track&offset=0&limit=20";
 
-            URL url = new URL(Endpoints.SEARCH + query);
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("q=");
+            queryBuilder.append(URLEncoder.encode("track:", StandardCharsets.UTF_8));
+            queryBuilder.append(URLEncoder.encode("\"" + CurrentSong.currentSong.split(" - ")[1] + "\"", StandardCharsets.UTF_8));
+//            queryBuilder.append(URLEncoder.encode("+artist:", StandardCharsets.UTF_8));
+//            queryBuilder.append(URLEncoder.encode("\"" + CurrentSong.currentSong.split(" - ")[0] + "\"", StandardCharsets.UTF_8));
+            queryBuilder.append("&type=track&offset=0&limit=10");
+
+            URL url = new URL(Endpoints.SEARCH + queryBuilder);
+
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestProperty("Accept", "application/json");
             http.setRequestProperty("Content-Type", "application/json");
-            http.setRequestProperty("Authorization", "Bearer " + tokenGetter.accessToken);
+            http.setRequestProperty("Authorization", "Bearer " + tokenGetter.getToken().replaceAll("\"", ""));
 
-            System.out.println(http.getResponseCode() + " " + http.getResponseMessage() + " " + Endpoints.SEARCH + query);
+            BufferedReader Lines = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            String currentLine = Lines.readLine();
+            StringBuilder response = new StringBuilder();
+            while (currentLine != null) {
+                response.append(currentLine).append("\n");
+                currentLine = Lines.readLine();
+            }
+
             http.disconnect();
-        }
 
+            String expectedValue = "";
+            String json = String.valueOf(response);
+            expectedValue = String.valueOf(JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("tracks"));
+            JsonArray allItems = JsonParser.parseString(expectedValue).getAsJsonObject().getAsJsonArray("items");
+
+            ArrayList<String> imageLinks = new ArrayList<>();
+            ArrayList<String> songURIs = new ArrayList<>();
+
+
+//            TODO: Fix for songs with no image in items array
+
+            allItems.forEach(item -> {
+                if (String.valueOf(item).contains(CurrentSong.currentSong.split(" - ")[1]) &&
+                        String.valueOf(item).contains(CurrentSong.currentSong.split(" - ")[0]) &&
+                        allItems.size() != 1) {
+
+                    String link = String.valueOf(JsonParser.parseString(String.valueOf(item)).getAsJsonObject().getAsJsonObject("album"));
+                    songURIs.add(String.valueOf(JsonParser.parseString(String.valueOf(item)).getAsJsonObject().get("uri")));
+                    link = String.valueOf(JsonParser.parseString(link).getAsJsonObject().getAsJsonArray("images").get(0));
+                    link = String.valueOf(JsonParser.parseString(link).getAsJsonObject().get("url")).replaceAll("\"", "");
+                    imageLinks.add(link);
+                } else {
+                    String link = String.valueOf(JsonParser.parseString(String.valueOf(item)).getAsJsonObject().getAsJsonObject("album"));
+                    songURIs.add(String.valueOf(JsonParser.parseString(String.valueOf(item)).getAsJsonObject().get("uri")));
+                    link = String.valueOf(JsonParser.parseString(link).getAsJsonObject().getAsJsonArray("images").get(0));
+                    link = String.valueOf(JsonParser.parseString(link).getAsJsonObject().get("url")).replaceAll("\"", "");
+                    imageLinks.add(link);
+                }
+            });
+
+            songId = songURIs.get(0);
+            imageLink = imageLinks.get(0);
+
+            System.out.println(songId);
+            System.out.println(imageLink);
+        }
     }
 
 }
+
+

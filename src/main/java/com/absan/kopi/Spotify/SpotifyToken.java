@@ -38,7 +38,16 @@ public class SpotifyToken {
 
         this.accessToken = String.valueOf(JsonParser.parseString(String.valueOf(response)).getAsJsonObject().get("access_token"));
         this.expiresIn = String.valueOf(JsonParser.parseString(String.valueOf(response)).getAsJsonObject().get("expires_in"));
-        System.out.println(accessToken);
         http.disconnect();
     }
+
+    public String getToken() throws IOException {
+        if (this.accessToken.equals("")) {
+            this.get();
+            return this.accessToken;
+        } else {
+            return this.accessToken;
+        }
+    }
+
 }

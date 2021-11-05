@@ -18,6 +18,8 @@ public class Main extends Application {
 
     public static FXMLLoader fxmlLoader;
     public static SpotifyToken tokenGetter;
+    public static Scene scene;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -25,10 +27,11 @@ public class Main extends Application {
         tokenGetter = new SpotifyToken();
         final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1);
-
+//
+        tokenGetter.getToken();
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                tokenGetter.get();
+                tokenGetter.getToken();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -40,7 +43,7 @@ public class Main extends Application {
         } else {
             fxmlLoader = new FXMLLoader(Main.class.getResource("SecondView.fxml"));
         }
-        Scene scene = new Scene(fxmlLoader.load(), 963, 593);
+        scene = new Scene(fxmlLoader.load(), 963, 593);
         stage.setResizable(false);
         stage.setTitle("Kopi v0.0.1");
 
