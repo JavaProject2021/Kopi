@@ -7,8 +7,8 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0"
-            prefWidth="963.0" fx:controller="com.absan.kopi.SceneController" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@Stylesheets/LyricsLableBG.css">
+            prefWidth="963.0" fx:controller="com.absan.kopi.utils.CurrentSong" xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ScrollPane layoutX="212.0" layoutY="40.0" prefHeight="553.0" prefWidth="963.0" AnchorPane.bottomAnchor="0.0"
                     AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
@@ -28,7 +28,7 @@
                 </AnchorPane>
             </content>
         </ScrollPane>
-        <Label layoutY="-2.0" prefHeight="43.0" prefWidth="957.0" fx:id="SongNameLabel" text="Label">
+        <Label layoutY="-2.0" prefHeight="43.0" prefWidth="957.0" fx:id="SongName" text="Label">
             <padding>
                 <Insets left="10.0"/>
             </padding>

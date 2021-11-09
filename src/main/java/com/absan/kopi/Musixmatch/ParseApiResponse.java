@@ -1,6 +1,5 @@
 package com.absan.kopi.Musixmatch;
 
-import com.absan.kopi.Google.GoogleLyrics;
 import com.google.gson.JsonParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class ParseApiResponse {
 
@@ -25,15 +23,11 @@ public class ParseApiResponse {
 
     public ParseApiResponse(String ApiQuery) throws IOException {
         this.apiQuery = ApiQuery;
+        System.out.println(ApiQuery);
         getResponse();
         getResponseCode();
-        if (isAvailable()) {
-            getUnsyncedLyrics();
-            getSyncedLyrics();
-        } else {
-            new GoogleLyrics().refreshLyrics();
-            MusixmatchLyrics.mfinalLyrics = new GoogleLyrics().finalLyrics;
-        }
+        getUnsyncedLyrics();
+        getSyncedLyrics();
     }
 
     protected void getResponse() throws IOException {
@@ -111,18 +105,6 @@ public class ParseApiResponse {
 
         }
         this.unsyncedLyrics = lyrics;
-    }
-
-    protected boolean isAvailable() {
-        String available = "";
-        available = String.valueOf(JsonParser.parseString(apiResponse).getAsJsonObject().getAsJsonObject("message"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().getAsJsonObject("body"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().getAsJsonObject("macro_calls"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().getAsJsonObject("track.subtitles.get"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().getAsJsonObject("message"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().getAsJsonObject("header"));
-        available = String.valueOf(JsonParser.parseString(available).getAsJsonObject().get("available"));
-        return !Objects.equals(available, "0");
     }
 
     protected void getSyncedLyrics() {

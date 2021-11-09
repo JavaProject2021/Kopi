@@ -155,8 +155,8 @@ public class SpotifyState {
             songId = songURIs.get(0);
             imageLink = imageLinks.get(0);
 
-//            System.out.println(songId);
-//            System.out.println(imageLink);
+            System.out.println(songId);
+            System.out.println(imageLink);
         }
     }
 
