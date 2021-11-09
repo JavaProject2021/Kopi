@@ -1,14 +1,6 @@
 package com.absan.kopi.Musixmatch;
 
 import com.absan.kopi.utils.CurrentSong;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import javafx.scene.layout.Pane;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 
 import java.io.IOException;
 import java.net.URLEncoder;

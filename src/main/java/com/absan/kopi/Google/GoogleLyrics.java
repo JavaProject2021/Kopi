@@ -1,5 +1,6 @@
 package com.absan.kopi.Google;
 
+import com.absan.kopi.Musixmatch.MusixmatchLyrics;
 import com.absan.kopi.utils.CurrentSong;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,7 +40,7 @@ public class GoogleLyrics {
                 "+lyrics";
 
         Document doc = Jsoup.connect(googleQuery).userAgent(userAgent).timeout(60 * 1000).get();
-        System.out.println(googleQuery);
+//        System.out.println(googleQuery);
         boolean hasLyrics = doc.select("span").select("[jsname='YS01Ge']").first() != null;
         if (hasLyrics) {
             Elements elements = doc.select("span").select("[jsname='YS01Ge']");
@@ -48,22 +49,27 @@ public class GoogleLyrics {
                 googleLyrics.add(Currentline);
             });
         }
+        if (googleLyrics.size() != 0) {
 
-        googleLyrics.remove(0);
-        googleLyrics.remove(0);
-        googleLyrics.remove(0);
-        googleLyrics.remove(0);
+            googleLyrics.remove(0);
+            googleLyrics.remove(0);
+            googleLyrics.remove(0);
+            googleLyrics.remove(0);
 
-        StringBuilder temp = new StringBuilder();
-        googleLyrics.forEach(line -> {
-            if (line.length() == 0) {
-                temp.append(line).append("♪");
-            } else {
-                temp.append(line).append("\n");
-            }
-        });
-        this.finalLyrics = String.valueOf(temp);
-
+            StringBuilder temp = new StringBuilder();
+            googleLyrics.forEach(line -> {
+                if (line.length() == 0) {
+                    temp.append(line).append("♪");
+                } else {
+                    temp.append(line).append("\n");
+                }
+            });
+            this.finalLyrics = String.valueOf(temp);
+        } else {
+            this.finalLyrics = "Lyrics not available :(";
+            MusixmatchLyrics.mfinalLyrics = "Lyrics not available :(";
+//          TODO: change the flow from a chain to de-centralised in main function i.e. CurrentSong class
+        }
     }
 
 

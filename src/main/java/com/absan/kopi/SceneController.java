@@ -1,7 +1,9 @@
 package com.absan.kopi;
 
+import com.absan.kopi.utils.CurrentSong;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -12,8 +14,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static com.absan.kopi.Main.scene1;
 
-public class LandingViewController {
+
+public class SceneController {
+
 
     @FXML
     Pane connectSpotify;
@@ -23,6 +28,12 @@ public class LandingViewController {
     ImageView spotifyActive;
     @FXML
     Label loginButtonText;
+
+    @FXML
+    Label SongNameLabel;
+
+    @FXML
+    Label LyricsLabel;
 
     @FXML
     public static AnchorPane rootPane;
@@ -44,10 +55,10 @@ public class LandingViewController {
 
     @FXML
     public static void openSecondView() throws IOException {
-        Stage rootStage = (Stage) rootPane.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(LandingViewController.class.getResource("SecondView.fxml"));
+        Stage rootStage = (Stage) scene1.lookup("#rootPane").getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(SceneController.class.getResource("SecondView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 963, 593);
-        rootStage.setScene(scene);
+        Main.rootStage.setScene(scene);
     }
 
     @FXML
@@ -55,5 +66,13 @@ public class LandingViewController {
         openSecondView();
     }
 
+    public void initialize() throws IOException {
+
+        System.out.println("Init-ed bi*ch");
+        SongNameLabel.setText("Init-ed bi*ch!");
+//        CurrentSong.callback();
+    }
+
 
 }
+

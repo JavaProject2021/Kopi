@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static com.absan.kopi.Main.scene;
+import static com.absan.kopi.Main.scene1;
 
 public class DominantColor {
 
@@ -29,7 +29,9 @@ public class DominantColor {
 
     @FXML
     protected void setBGFG() {
-        scene.lookup("#LyricsLabel").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+        if(scene1.lookup("#LyricsLabel") != null) {
+            scene1.lookup("#LyricsLabel").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+        }
     }
 
     protected void getImage() throws IOException {
@@ -53,6 +55,7 @@ public class DominantColor {
         return bimage;
     }
 
+
     private float CalculateLuminance(ArrayList<Integer> rgb) {
         return (float) (0.2126 * rgb.get(0) + 0.7152 * rgb.get(1) + 0.0722 * rgb.get(2));
     }
@@ -70,5 +73,6 @@ public class DominantColor {
         this.dominantForeGround = (luminance < 140) ? "#fff" : "#000";
     }
 
+//    protected void
 
 }
