@@ -55,7 +55,11 @@
             <version>0.7.3</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>11</version>
+        </dependency>
 
     </dependencies>
 

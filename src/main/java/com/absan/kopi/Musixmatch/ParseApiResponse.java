@@ -14,8 +14,8 @@ public class ParseApiResponse {
     public String apiQuery = "";
     public String apiResponse = "";
     public int responseCode = 0;
-    public List<String> unsyncedLyrics = new ArrayList();
-    public List<RichLyrics> syncedLyrics = new ArrayList();
+    public static List<String> unsyncedLyrics = null;
+    public static List<RichLyrics> syncedLyrics = null;
 
     final String userAgent =
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
@@ -23,7 +23,7 @@ public class ParseApiResponse {
 
     public ParseApiResponse(String ApiQuery) throws IOException {
         this.apiQuery = ApiQuery;
-        System.out.println(ApiQuery);
+//        System.out.println(ApiQuery);
         getResponse();
         getResponseCode();
         getUnsyncedLyrics();
@@ -100,7 +100,9 @@ public class ParseApiResponse {
             if (line.length() != 0) {
                 lyrics.add(line);
             } else {
+                lyrics.add("");
                 lyrics.add("♪");
+                lyrics.add("");
             }
 
         }

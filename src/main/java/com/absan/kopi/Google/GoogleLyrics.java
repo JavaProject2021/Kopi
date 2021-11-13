@@ -39,7 +39,7 @@ public class GoogleLyrics {
                 "+lyrics";
 
         Document doc = Jsoup.connect(googleQuery).userAgent(userAgent).timeout(60 * 1000).get();
-        System.out.println(googleQuery);
+//        System.out.println(googleQuery);
         boolean hasLyrics = doc.select("span").select("[jsname='YS01Ge']").first() != null;
         if (hasLyrics) {
             Elements elements = doc.select("span").select("[jsname='YS01Ge']");

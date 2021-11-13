@@ -1,5 +1,6 @@
 package com.absan.kopi.Musixmatch;
 
+import com.absan.kopi.Google.GoogleLyrics;
 import com.absan.kopi.utils.CurrentSong;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -68,16 +69,24 @@ public class MusixmatchLyrics {
                 .append("signature=0IwdyrdfMG0e%2B8B%2FhnuTnnKAhvI%3D&")
                 .append("signature_protocol=sha1");
 
-        ParseApiResponse variable = new ParseApiResponse(String.valueOf(musixmatchQuery));
-        musixmatchUnsyncedLyrics = variable.unsyncedLyrics;
-        musixmatchSyncedLyrics = variable.syncedLyrics;
+//        if(ParseApiResponse.unsyncedLyrics == null && ParseApiResponse.syncedLyrics == null) {
+        new ParseApiResponse(String.valueOf(musixmatchQuery));
+//        }
+        musixmatchUnsyncedLyrics = ParseApiResponse.unsyncedLyrics;
+        musixmatchSyncedLyrics = ParseApiResponse.syncedLyrics;
+
 
         StringBuilder sb = new StringBuilder();
         musixmatchUnsyncedLyrics.forEach(line -> {
             sb.append(line).append("\n");
         });
 
-        mfinalLyrics = String.valueOf(sb);
+        if (String.valueOf(sb).length() == 0) {
+            mfinalLyrics = new GoogleLyrics().finalLyrics;
+        } else {
+            mfinalLyrics = String.valueOf(sb);
+        }
+
 
     }
 

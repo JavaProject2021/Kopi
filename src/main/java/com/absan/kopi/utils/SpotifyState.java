@@ -28,7 +28,7 @@ public class SpotifyState {
         Runtime.getRuntime().exec(System.getenv("APPDATA") + "\\Spotify\\Spotify.exe");
     }
 
-//    TODO: Make a method to close and open spotify and resume playing song with windows sound server
+    //    TODO: Make a method to close and open spotify and resume playing song with windows sound server
     public static void skipAd() {
         try {
             SpotifyState.kill();
@@ -152,11 +152,17 @@ public class SpotifyState {
                 }
             });
 
-            songId = songURIs.get(0);
-            imageLink = imageLinks.get(0);
+            if (songURIs.size() != 0) {
+                songId = songURIs.get(0);
+            } else {
+                songId = "";
+            }
+            if (imageLinks.size() != 0) {
+                imageLink = imageLinks.get(0);
+            } else {
+                imageLink = "https://picsum.photos/536/354";
+            }
 
-            System.out.println(songId);
-            System.out.println(imageLink);
         }
     }
 

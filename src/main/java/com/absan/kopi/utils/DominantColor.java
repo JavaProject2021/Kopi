@@ -1,9 +1,12 @@
 package com.absan.kopi.utils;
 
 import com.spikeify.ffmpeg.colorthief.ColorThief;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.image.ImageView;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -29,12 +32,26 @@ public class DominantColor {
 
     @FXML
     protected void setBGFG() {
+        scene.lookup("#scrollPane").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\"; -fx-background-radius: 10");
         scene.lookup("#LyricsLabel").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+        scene.lookup("#lyricsContainer").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+        scene.lookup(".scroll-bar:vertical .thumb").setStyle("-fx-background-color: \"" + this.dominantForeGround + "\";");
+
+        if(scene.lookup("#coverImage") == null) {
+            scene.lookup("#SongDataContainer").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+            scene.lookup("#SongName").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+            scene.lookup("#ArtistName").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+            scene.lookup("#Divider").setStyle("-fx-text-fill: \"" + this.dominantForeGround + "\";" + "-fx-background-color: \"" + this.dominantHex + "\";");
+        }
     }
 
     protected void getImage() throws IOException {
         URL imgUrl = new URL(this.imageUrl);
         this.image = ImageIO.read(imgUrl);
+
+        if(scene.lookup("#coverImage") != null) {
+            ((ImageView) scene.lookup("#coverImage")).setImage(SwingFXUtils.toFXImage(toBufferedImage(this.image), null));
+        }
     }
 
     protected void getDominantColor() {
