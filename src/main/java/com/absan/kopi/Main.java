@@ -24,7 +24,7 @@ public class Main extends Application {
     public static Stage stage;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, AWTException {
 
         tokenGetter = new SpotifyToken();
         final ScheduledExecutorService scheduler =
@@ -40,7 +40,7 @@ public class Main extends Application {
         }, 0, 3600, TimeUnit.SECONDS);
 
 
-        fxmlLoader = new FXMLLoader(Main.class.getResource("SecondView.fxml"));
+        fxmlLoader = new FXMLLoader(Main.class.getResource("MainLayout.fxml"));
 
         scene = new Scene(fxmlLoader.load(), 963, 593);
         Main.stage = stage;

@@ -30,9 +30,9 @@
                                    pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="16.0"
                                    AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="879.2"
                                    AnchorPane.topAnchor="16.0"/>
-                        <ImageView fitHeight="23.0" fitWidth="31.0" layoutX="938.0" layoutY="75.0" pickOnBounds="true"
-                                   preserveRatio="true" fx:id="pictureInPicture" onMouseClicked="#switchToSmallWindow"
-                                   AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                        <ImageView fx:id="pictureInPicture" fitHeight="23.0" fitWidth="31.0" layoutX="938.0"
+                                   layoutY="75.0" onMouseClicked="#switchToSmallWindow" pickOnBounds="true"
+                                   preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
                             <image>
                                 <Image url="@Images/pip2.png"/>
                             </image>
@@ -40,22 +40,21 @@
                                 <Cursor fx:constant="HAND"/>
                             </cursor>
                         </ImageView>
-                        <Label id="SongName" fx:id="SongName" layoutX="97.0" layoutY="26.0" prefWidth="397.0"
-                               text="Label" textFill="#2f2f2f" wrapText="true" AnchorPane.leftAnchor="97.0"
-                               AnchorPane.topAnchor="26.0">
+                        <Label id="SongName" fx:id="SongName" alignment="BOTTOM_LEFT" layoutX="97.0" layoutY="-3.0"
+                               prefHeight="59.0" prefWidth="272.0" text="Label" textFill="#2f2f2f" wrapText="true"
+                               AnchorPane.leftAnchor="97.0" AnchorPane.topAnchor="-3.0">
                             <font>
                                 <Font name="System Bold" size="20.0"/>
                             </font>
                         </Label>
-                        <Label fx:id="ArtistName" layoutX="97.0" layoutY="56.0" prefWidth="397.0" text="Label"
-                               textFill="#2f2f2f" wrapText="true">
+                        <Label fx:id="ArtistName" alignment="TOP_LEFT" layoutX="97.0" layoutY="56.0" prefHeight="41.0"
+                               prefWidth="269.0" text="Label" textFill="#2f2f2f" wrapText="true">
                             <font>
                                 <Font size="13.0"/>
                             </font>
                         </Label>
-                        <ImageView fitHeight="50.0" fx:id="songState" fitWidth="50.0"
-                                   layoutX="469.0" layoutY="18.0"
-                                   pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="songState" fitHeight="50.0" fitWidth="50.0" layoutX="469.0" layoutY="18.0"
+                                   onMouseClicked="#mediaControlButton" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@Images/pause.png"/>
                             </image>
@@ -69,6 +68,24 @@
                                 <Font name="System Italic" size="13.0"/>
                             </font>
                         </Label>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="413.0" layoutY="28.0" pickOnBounds="true"
+                                   preserveRatio="true" onMouseClicked="#prevSong">
+                            <image>
+                                <Image url="@Images/prevSong.png"/>
+                            </image>
+                            <cursor>
+                                <Cursor fx:constant="HAND"/>
+                            </cursor>
+                        </ImageView>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="542.0" layoutY="28.0" pickOnBounds="true"
+                                   preserveRatio="true" onMouseClicked="#nextSong">
+                            <image>
+                                <Image url="@Images/nextSong.png"/>
+                            </image>
+                            <cursor>
+                                <Cursor fx:constant="HAND"/>
+                            </cursor>
+                        </ImageView>
                     </children>
                 </AnchorPane>
             </bottom>

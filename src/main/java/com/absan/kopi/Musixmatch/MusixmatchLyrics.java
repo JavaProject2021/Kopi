@@ -2,11 +2,7 @@ package com.absan.kopi.Musixmatch;
 
 import com.absan.kopi.Google.GoogleLyrics;
 import com.absan.kopi.utils.CurrentSong;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import javafx.scene.layout.Pane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -20,11 +16,19 @@ import java.util.List;
 import java.util.Random;
 
 public class MusixmatchLyrics {
-    String artistName;
-    String songName;
-    public static List<String> musixmatchUnsyncedLyrics = new ArrayList<String>();
-    public static List<RichLyrics> musixmatchSyncedLyrics = new ArrayList<RichLyrics>();
-    public static String mfinalLyrics = "";
+    private String artistName;
+    private String songName;
+    private List<String> musixmatchUnsyncedLyrics = new ArrayList<String>();
+    private List<RichLyrics> musixmatchSyncedLyrics = new ArrayList<RichLyrics>();
+    private static String mfinalLyrics = "";
+
+    public static String getFinalLyrics() {
+        return mfinalLyrics;
+    }
+
+    public void setFinalLyrics(String finalLyrics) {
+        mfinalLyrics = finalLyrics;
+    }
 
     List<String> userTokenList = new ArrayList(Arrays.asList(
             "2110231e1499a3fcd07aa419d7eee9f4e7d46e17650d65198585d5",
@@ -50,8 +54,9 @@ public class MusixmatchLyrics {
 
 
     public void refreshLyrics() throws IOException {
-        artistName = CurrentSong.currentSong.split(" - ")[0];
-        songName = CurrentSong.currentSong.split(" - ")[1];
+        artistName = CurrentSong.getCurrentSong().split(" - ")[0];
+        songName = CurrentSong.getCurrentSong().split(" - ")[1];
+
         StringBuilder musixmatchQuery = new StringBuilder()
                 .append("https://apic-desktop.musixmatch.com/ws/1.1/macro.subtitles.get?")
                 .append("format=json&")
@@ -69,11 +74,10 @@ public class MusixmatchLyrics {
                 .append("signature=0IwdyrdfMG0e%2B8B%2FhnuTnnKAhvI%3D&")
                 .append("signature_protocol=sha1");
 
-//        if(ParseApiResponse.unsyncedLyrics == null && ParseApiResponse.syncedLyrics == null) {
-        new ParseApiResponse(String.valueOf(musixmatchQuery));
-//        }
-        musixmatchUnsyncedLyrics = ParseApiResponse.unsyncedLyrics;
-        musixmatchSyncedLyrics = ParseApiResponse.syncedLyrics;
+        ParseApiResponse parseApiResponse = new ParseApiResponse(String.valueOf(musixmatchQuery));
+
+        musixmatchUnsyncedLyrics = parseApiResponse.getUnSyncedLyrics();
+        musixmatchSyncedLyrics = parseApiResponse.getSyncedLyrics();
 
 
         StringBuilder sb = new StringBuilder();
@@ -82,11 +86,175 @@ public class MusixmatchLyrics {
         });
 
         if (String.valueOf(sb).length() == 0) {
-            mfinalLyrics = new GoogleLyrics().finalLyrics;
+            setFinalLyrics(new GoogleLyrics().getFinalLyrics());
         } else {
-            mfinalLyrics = String.valueOf(sb);
+            setFinalLyrics(String.valueOf(sb));
         }
 
+
+    }
+
+
+    private static class ParseApiResponse {
+
+        private String apiQuery = "";
+        private String apiResponse = "";
+        private int responseCode = 0;
+        private List<String> unsyncedLyrics = null;
+        private List<RichLyrics> syncedLyrics = null;
+
+        public List<String> getUnSyncedLyrics() {
+            return unsyncedLyrics;
+        }
+
+        public List<RichLyrics> getSyncedLyrics() {
+            return syncedLyrics;
+        }
+
+        public void setUnSyncedLyrics(List<String> unsyncedLyric) {
+            unsyncedLyrics = unsyncedLyric;
+        }
+
+        public void setSyncedLyrics(List<RichLyrics> syncedLyric) {
+            syncedLyrics = syncedLyric;
+        }
+
+        final String userAgent =
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
+
+
+        public ParseApiResponse(String ApiQuery) throws IOException {
+            this.apiQuery = ApiQuery;
+            getResponse();
+            getResponseCode();
+            fetchUnsyncedLyrics();
+            fetchSyncedLyrics();
+        }
+
+        protected void getResponse() throws IOException {
+            Document doc = Jsoup.connect(String.valueOf(this.apiQuery)).userAgent(userAgent).timeout(60 * 1000).get();
+            this.apiResponse = doc.select("body").text();
+        }
+
+        protected void getResponseCode() {
+            String lyricsStatusCode = "";
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(apiResponse).getAsJsonObject().getAsJsonObject("message"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().getAsJsonObject("body"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().getAsJsonObject("macro_calls"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().getAsJsonObject("track.lyrics.get"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().getAsJsonObject("message"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().getAsJsonObject("header"));
+            lyricsStatusCode = String.valueOf(JsonParser.parseString(lyricsStatusCode).getAsJsonObject().get("status_code"));
+            responseCode = Integer.parseInt(lyricsStatusCode);
+        }
+
+        protected void fetchUnsyncedLyrics() {
+            List<String> lyrics = new ArrayList<>();
+            String lyricsString = "";
+            String tempLyrics = "";
+
+            lyricsString = String.valueOf(JsonParser.parseString(apiResponse).getAsJsonObject().getAsJsonObject("message"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("body"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("macro_calls"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("track.lyrics.get"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("message"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("body"));
+
+            try {
+                tempLyrics = lyricsString;
+                tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonObject().getAsJsonObject("lyrics"));
+                tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonObject().get("lyrics_body"));
+                lyricsString = tempLyrics;
+            } catch (Exception e) {
+                try {
+                    tempLyrics = lyricsString;
+                    tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonObject().getAsJsonArray("crowd_lyrics_list"));
+                    tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonArray().get(0));
+                    tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonObject().getAsJsonObject("lyrics"));
+                    tempLyrics = String.valueOf(JsonParser.parseString(tempLyrics).getAsJsonObject().get("lyrics_body"));
+                    lyricsString = tempLyrics;
+                } catch (Exception e2) {
+                    lyricsString = "No musixmatch";
+                }
+            }
+
+            if (!lyricsString.equals("No musixmatch")) {
+                lyricsString = lyricsString.substring(1, lyricsString.length() - 1);
+                if (lyricsString.length() % 2 != 0) {
+                    lyricsString += " ";
+                }
+                StringBuilder modifiedLyrics = new StringBuilder();
+                for (int i = 0; i < lyricsString.length() - 1; i++) {
+                    if (lyricsString.charAt(i) == '\\') {
+                        if (lyricsString.charAt(i + 1) == 'n') {
+                            modifiedLyrics.append("###");
+                            i++;
+                        }
+                    } else {
+                        modifiedLyrics.append(lyricsString.charAt(i));
+                    }
+                }
+                lyricsString = String.valueOf(modifiedLyrics);
+            }
+
+            for (String line : lyricsString.split("###")) {
+                if (line.length() != 0) {
+                    lyrics.add(line);
+                } else {
+                    lyrics.add("");
+                    lyrics.add("♪");
+                    lyrics.add("");
+                }
+
+            }
+            setUnSyncedLyrics(lyrics);
+        }
+
+        protected void fetchSyncedLyrics() {
+            List<RichLyrics> lyrics = new ArrayList<>();
+            String lyricsString = "";
+
+            lyricsString = String.valueOf(JsonParser.parseString(apiResponse).getAsJsonObject().getAsJsonObject("message"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("body"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("macro_calls"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("track.subtitles.get"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("message"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonObject("body"));
+
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().getAsJsonArray("subtitle_list"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonArray().get(0));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().get("subtitle"));
+            lyricsString = String.valueOf(JsonParser.parseString(lyricsString).getAsJsonObject().get("subtitle_body"));
+            lyricsString = lyricsString.substring(1, lyricsString.length() - 1);
+
+            StringBuilder modifiedLyrics = new StringBuilder();
+            for (int i = 0; i < lyricsString.length() - 1; i++) {
+                if (lyricsString.charAt(i) == '\\') {
+                    if (lyricsString.charAt(i + 1) == '"') {
+                        modifiedLyrics.append("###");
+                        i++;
+                    }
+                } else {
+                    modifiedLyrics.append(lyricsString.charAt(i));
+                }
+            }
+            lyricsString = String.valueOf(modifiedLyrics);
+
+            for (int i = 1; i < lyricsString.split("###text###:").length - 1; i++) {
+                String currentLine = lyricsString.split("###text###:")[i].replace("}},{", "");
+                String currentLyrics = currentLine.split("###,###time###:")[0].replaceAll("###", "");
+                if (currentLyrics.length() == 0) {
+                    currentLyrics = "♪";
+                }
+
+                Double total = Double.parseDouble(currentLine.split("###total###:")[1].split(",###minutes###:")[0]);
+                Double minutes = Double.parseDouble(currentLine.split(",###minutes###:")[1].split(",###seconds###:")[0]);
+                Double seconds = Double.parseDouble(currentLine.split(",###seconds###:")[1].split(",###hundredths###:")[0]);
+                Double hundredths = Double.parseDouble(currentLine.split(",###hundredths###:")[1]);
+                lyrics.add(new RichLyrics(currentLyrics, total, minutes, seconds, hundredths));
+            }
+            setSyncedLyrics(lyrics);
+        }
 
     }
 

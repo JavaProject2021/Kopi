@@ -3,6 +3,8 @@ package com.absan.kopi.utils;
 import com.absan.kopi.Google.GoogleLyrics;
 import com.absan.kopi.Main;
 import com.absan.kopi.Musixmatch.MusixmatchLyrics;
+import com.absan.kopi.Spotify.SpotifyState;
+import commands.MediaKeys;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.awt.*;
 import java.io.IOException;
 
 import static com.absan.kopi.Main.*;
@@ -47,29 +50,64 @@ public class CurrentSong {
     ScrollPane scrollPane;
 
 
-    public static StringProperty songname = new SimpleStringProperty();
-    public static StringProperty artistname = new SimpleStringProperty();
-    public static StringProperty lyricContent = new SimpleStringProperty();
-    public static StringProperty spotifystatus = new SimpleStringProperty();
-    public static GoogleLyrics gLyrics = null;
-    public static MusixmatchLyrics mLyrics = null;
+    private static final StringProperty songname = new SimpleStringProperty();
+    private static final StringProperty artistname = new SimpleStringProperty();
+    private static final StringProperty lyricContent = new SimpleStringProperty();
+    private static final StringProperty spotifystatus = new SimpleStringProperty();
+    private static GoogleLyrics gLyrics = null;
+    private static MusixmatchLyrics mLyrics = null;
 
-    public static boolean isStarted;
+    private static boolean isStarted = false;
 
-    public static String currentSong = "";
+    private static String currentSong = "";
+
+    public static String getCurrentSong() {
+        return currentSong;
+    }
 
 
-    public CurrentSong() throws IOException {
+    public void setCurrentSong(String currentSongParam) {
+        currentSong = currentSongParam;
+    }
+
+
+    public CurrentSong() throws IOException, AWTException {
         if (!CurrentSong.isStarted) {
             StartChecking();
+            callback();
             isStarted = true;
         }
+//        if (SpotifyState.isSpotifyOpen()) {
         Platform.runLater(() -> {
             if (InitialOverlay != null) {
                 InitialOverlay.setStyle("visibility:hidden;");
             }
         });
+//        } else {
+//            Platform.runLater(() -> {
+//                if (InitialOverlay != null) {
+//                    InitialOverlay.setStyle("visibility:visible;");
+//                }
+//            });
+//        }
         callback();
+
+    }
+
+    private void setInitialOverlay() {
+        if (SpotifyState.isSpotifyOpen()) {
+            Platform.runLater(() -> {
+                if (InitialOverlay != null) {
+                    InitialOverlay.setStyle("visibility:hidden;");
+                }
+            });
+        } else {
+            Platform.runLater(() -> {
+                if (InitialOverlay != null) {
+                    InitialOverlay.setStyle("visibility:visible;");
+                }
+            });
+        }
 
 
     }
@@ -77,19 +115,19 @@ public class CurrentSong {
     protected void StartChecking() {
         final String[] oldSong = {""};
 
-        currentSong = SpotifyState.getCurrentSongName();
+        setCurrentSong(SpotifyState.getCurrentSongName());
         Thread songChecker = new Thread(() -> {
             while (true) {
 
-                if (!oldSong[0].equals(SpotifyState.getCurrentSongName())) {
+                if (SpotifyState.isSpotifyOpen() && !oldSong[0].equals(SpotifyState.getCurrentSongName())) {
                     oldSong[0] = SpotifyState.getCurrentSongName();
-                    currentSong = SpotifyState.getCurrentSongName();
+                    setCurrentSong(SpotifyState.getCurrentSongName());
                     if (mLyrics == null && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free")) {
                         mLyrics = new MusixmatchLyrics();
                     }
                     try {
                         callback();
-                    } catch (IOException e) {
+                    } catch (IOException | AWTException e) {
                         e.printStackTrace();
                     }
                 }
@@ -98,12 +136,14 @@ public class CurrentSong {
         songChecker.start();
     }
 
-    public void callback() throws IOException {
+    private void callback() throws IOException, AWTException {
+
+        setInitialOverlay();
 
         if (!currentSong.equals("Advertisement") && !currentSong.equals("Spotify not opened") && !currentSong.equals("Spotify Free") && !currentSong.equals("Spotify")) {
             Platform.runLater(() -> {
                 spotifystatus.set("Playing...");
-                playButton();
+                pauseButton();
                 try {
                     spotifyStatus.textProperty().bind(spotifystatus);
                 } catch (Exception ignored) {
@@ -130,7 +170,7 @@ public class CurrentSong {
             Platform.runLater(() -> {
                 try {
                     mLyrics.refreshLyrics();
-                    lyricContent.set(MusixmatchLyrics.mfinalLyrics);
+                    lyricContent.set(MusixmatchLyrics.getFinalLyrics());
                 } catch (IOException e) {
                     e.printStackTrace();
                     lyricContent.set(String.valueOf(e));
@@ -151,7 +191,8 @@ public class CurrentSong {
             if (currentSong.equals("Spotify Free") || currentSong.equals("Spotify")) {
                 Platform.runLater(() -> {
                     spotifystatus.set("Not Playing...");
-                    if(spotifyStatus != null) {
+                    playButton();
+                    if (spotifyStatus != null) {
                         spotifyStatus.textProperty().bind(spotifystatus);
                     }
                 });
@@ -160,7 +201,8 @@ public class CurrentSong {
                     spotifystatus.set("Advertisement");
                     spotifyStatus.textProperty().bind(spotifystatus);
                 });
-            } else {
+                SpotifyState.skipAd();
+            } else if (SpotifyState.isSpotifyOpen()) {
                 Platform.runLater(() -> {
                     spotifystatus.set("Spotify Not Open...");
                     spotifyStatus.textProperty().bind(spotifystatus);
@@ -199,18 +241,41 @@ public class CurrentSong {
     }
 
     @FXML
-    protected void playButton() {
-        if(songState != null) {
+    protected void mediaControlButton() {
+        if (songState != null) {
             if (currentSong.equals("Spotify Free") || currentSong.equals("Spotify")) {
-                songState.setImage(new Image(String.valueOf(Main.class.getResource("Images/play.png"))));
-            } else {
                 songState.setImage(new Image(String.valueOf(Main.class.getResource("Images/pause.png"))));
+            } else {
+                songState.setImage(new Image(String.valueOf(Main.class.getResource("Images/play.png"))));
             }
+            MediaKeys.songPlayPause();
         }
     }
 
     @FXML
-    protected void switchToSmallWindow() throws IOException {
+    protected void nextSong() {
+        MediaKeys.songNext();
+    }
+
+    @FXML
+    protected void prevSong() {
+        MediaKeys.songPrevious();
+    }
+
+    protected void pauseButton() {
+        if (songState != null) {
+            songState.setImage(new Image(String.valueOf(Main.class.getResource("Images/pause.png"))));
+        }
+    }
+
+    protected void playButton() {
+        if (songState != null) {
+            songState.setImage(new Image(String.valueOf(Main.class.getResource("Images/play.png"))));
+        }
+    }
+
+    @FXML
+    protected void switchToSmallWindow() throws IOException, AWTException {
         Platform.runLater(() -> {
             fxmlLoader = new FXMLLoader(Main.class.getResource("SmallWindow.fxml"));
             try {
@@ -230,7 +295,7 @@ public class CurrentSong {
     @FXML
     protected void switchToBigWindow() {
         Platform.runLater(() -> {
-            fxmlLoader = new FXMLLoader(Main.class.getResource("SecondView.fxml"));
+            fxmlLoader = new FXMLLoader(Main.class.getResource("MainLayout.fxml"));
             try {
                 scene = new Scene(fxmlLoader.load(), 963, 593);
             } catch (IOException e) {

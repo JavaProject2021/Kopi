@@ -12,10 +12,18 @@ import java.util.ArrayList;
 
 public class GoogleLyrics {
 
-    public String artistName = CurrentSong.currentSong.split(" - ")[0];
-    public String songName = CurrentSong.currentSong.split(" - ")[1];
-    public ArrayList<String> googleLyrics = new ArrayList<String>();
-    public String finalLyrics = "";
+    private String artistName = CurrentSong.getCurrentSong().split(" - ")[0];
+    private String songName = CurrentSong.getCurrentSong().split(" - ")[1];
+    private ArrayList<String> googleLyrics = new ArrayList<String>();
+    private String finalLyrics = "";
+
+    public String getFinalLyrics() {
+        return finalLyrics;
+    }
+
+    public void setFinalLyrics(String finalLyrics) {
+        this.finalLyrics = finalLyrics;
+    }
 
     String googleQuery = "https://www.google.com/search?q=" +
             URLEncoder.encode(songName, StandardCharsets.UTF_8) + "+" +
@@ -29,8 +37,8 @@ public class GoogleLyrics {
 
     public void refreshLyrics() throws IOException {
 
-        artistName = CurrentSong.currentSong.split(" - ")[0];
-        songName = CurrentSong.currentSong.split(" - ")[1];
+        artistName = CurrentSong.getCurrentSong().split(" - ")[0];
+        songName = CurrentSong.getCurrentSong().split(" - ")[1];
         googleLyrics = new ArrayList<>();
         finalLyrics = "";
         googleQuery = "https://www.google.com/search?q=" +
@@ -39,7 +47,6 @@ public class GoogleLyrics {
                 "+lyrics";
 
         Document doc = Jsoup.connect(googleQuery).userAgent(userAgent).timeout(60 * 1000).get();
-//        System.out.println(googleQuery);
         boolean hasLyrics = doc.select("span").select("[jsname='YS01Ge']").first() != null;
         if (hasLyrics) {
             Elements elements = doc.select("span").select("[jsname='YS01Ge']");
@@ -62,7 +69,8 @@ public class GoogleLyrics {
                 temp.append(line).append("\n");
             }
         });
-        this.finalLyrics = String.valueOf(temp);
+
+        setFinalLyrics(String.valueOf(temp));
 
     }
 

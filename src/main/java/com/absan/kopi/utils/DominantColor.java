@@ -71,6 +71,7 @@ public class DominantColor {
     }
 
     private float CalculateLuminance(ArrayList<Integer> rgb) {
+//      luminance = 0.2126*R + 0.7152*G + 0.0722*B
         return (float) (0.2126 * rgb.get(0) + 0.7152 * rgb.get(1) + 0.0722 * rgb.get(2));
     }
 

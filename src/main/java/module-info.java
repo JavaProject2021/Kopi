@@ -13,4 +13,5 @@ module com.absan.kopi {
     opens com.absan.kopi.utils to javafx.fxml;
 
     exports com.absan.kopi;
+    opens com.absan.kopi.Spotify to javafx.fxml;
 }
