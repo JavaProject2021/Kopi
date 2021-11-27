@@ -295,7 +295,7 @@ public class CurrentSong {
     @FXML
     protected void switchToBigWindow() {
         Platform.runLater(() -> {
-            fxmlLoader = new FXMLLoader(Main.class.getResource("MainLayout.fxml"));
+            fxmlLoader = new FXMLLoader(Main.class.getResource("SecondView.fxml"));
             try {
                 scene = new Scene(fxmlLoader.load(), 963, 593);
             } catch (IOException e) {

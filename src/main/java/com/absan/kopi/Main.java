@@ -40,7 +40,7 @@ public class Main extends Application {
         }, 0, 3600, TimeUnit.SECONDS);
 
 
-        fxmlLoader = new FXMLLoader(Main.class.getResource("MainLayout.fxml"));
+        fxmlLoader = new FXMLLoader(getClass().getResource("SecondView.fxml"));
 
         scene = new Scene(fxmlLoader.load(), 963, 593);
         Main.stage = stage;

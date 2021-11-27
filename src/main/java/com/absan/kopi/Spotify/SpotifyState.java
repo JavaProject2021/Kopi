@@ -24,43 +24,41 @@ public class SpotifyState {
     public static String imageLink;
     public static String songId;
 
-    public static void kill() throws IOException {
-        Runtime.getRuntime().exec("taskkill /F /IM Spotify.exe");
-    }
-
-    public static void start() throws IOException {
-        Runtime.getRuntime().exec(System.getenv("APPDATA") + "\\Spotify\\Spotify.exe");
-    }
-
-    //    TODO: Make a method to close and open spotify and resume playing song with windows sound server
-    public static void skipAd() throws AWTException {
+    public static void kill() {
         try {
-            SpotifyState.kill();
+            Runtime.getRuntime().exec("taskkill /F /IM Spotify.exe");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static void start() {
         try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            SpotifyState.start();
+            Runtime.getRuntime().exec(System.getenv("APPDATA") + "\\Spotify\\Spotify.exe");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void delay(int mills) {
         try {
-            Thread.sleep(250);
+            Thread.sleep(mills);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void skipAd() throws AWTException, IOException {
+        SpotifyState.kill();
+        delay(250);
+        SpotifyState.start();
+
+        delay(250);
         MediaKeys.songPlayPause();
         MediaKeys.songNext();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        delay(50);
+
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_WINDOWS);
         robot.keyPress(KeyEvent.VK_DOWN);
