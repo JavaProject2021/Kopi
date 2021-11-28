@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static com.absan.kopi.Main.*;
 
@@ -256,7 +257,7 @@ public class CurrentSong {
     }
 
     @FXML
-    protected void startSpotify() {
+    protected void startSpotify() throws URISyntaxException, IOException {
         SpotifyState.start();
     }
 

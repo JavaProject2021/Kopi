@@ -1,22 +1,27 @@
 package com.absan.kopi.Spotify;
 
+import com.absan.kopi.Main;
 import com.absan.kopi.utils.CurrentSong;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import commands.MediaKeys;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 import static com.absan.kopi.Main.tokenGetter;
 
@@ -33,11 +38,29 @@ public class SpotifyState {
 
     }
 
-    public static void start() {
+    public static void start() throws URISyntaxException, IOException {
         try {
             Runtime.getRuntime().exec(System.getenv("APPDATA") + "\\Spotify\\Spotify.exe");
         } catch (IOException e) {
-            e.printStackTrace();
+
+            Alert alert = new Alert(AlertType.NONE);
+            ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(String.valueOf(Main.class.getResource("Images/kopiLogo.png"))));
+            alert.setTitle("No Spotify Installed!");
+            ButtonType type = new ButtonType("Download Spotify", ButtonData.OK_DONE);
+            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+            alert.setContentText("Spotify is not installed in your device. \nPlease download and log on to spotify before trying again.\n");
+
+            alert.getDialogPane().getButtonTypes().add(cancel);
+            alert.getDialogPane().getButtonTypes().add(type);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.get().getText().equals("Download Spotify")) {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(new URI("https://www.spotify.com/us/download"));
+                }
+            }
         }
     }
 
@@ -49,10 +72,14 @@ public class SpotifyState {
         }
     }
 
-    public static void skipAd() throws AWTException, IOException {
+    public static void skipAd() throws AWTException {
         SpotifyState.kill();
         delay(250);
-        SpotifyState.start();
+        try {
+
+            SpotifyState.start();
+        } catch (Exception ignored) {
+        }
 
         delay(250);
         MediaKeys.songPlayPause();
