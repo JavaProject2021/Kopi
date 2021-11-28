@@ -77,19 +77,12 @@ public class CurrentSong {
             callback();
             isStarted = true;
         }
-//        if (SpotifyState.isSpotifyOpen()) {
+
         Platform.runLater(() -> {
             if (InitialOverlay != null) {
                 InitialOverlay.setStyle("visibility:hidden;");
             }
         });
-//        } else {
-//            Platform.runLater(() -> {
-//                if (InitialOverlay != null) {
-//                    InitialOverlay.setStyle("visibility:visible;");
-//                }
-//            });
-//        }
         callback();
 
     }
@@ -260,6 +253,11 @@ public class CurrentSong {
     @FXML
     protected void prevSong() {
         MediaKeys.songPrevious();
+    }
+
+    @FXML
+    protected void startSpotify() {
+        SpotifyState.start();
     }
 
     protected void pauseButton() {

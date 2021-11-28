@@ -151,8 +151,8 @@
                                 <Image url="@Images/spotify.png"/>
                             </image>
                         </ImageView>
-                        <Label fx:id="loginButtonText" layoutY="-1.0" prefHeight="79.0" prefWidth="217.0"
-                               style="-fx-alignment: CENTER;" text="Connect Spotify" textFill="#1ed760">
+                        <Label fx:id="loginButtonText" onMouseClicked="#startSpotify" layoutY="-1.0" prefHeight="79.0" prefWidth="217.0"
+                               style="-fx-alignment: CENTER;" text="Open Spotify" textFill="#1ed760">
                             <font>
                                 <Font name="System Bold" size="18.0"/>
                             </font>
